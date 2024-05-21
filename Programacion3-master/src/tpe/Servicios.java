@@ -1,35 +1,21 @@
 package tpe;
 
 import tpe.utils.CSVReader;
-
 import java.util.*;
 
-
-//Servicios se va a encargar del servicio tareas para poder usar distintas estructuras
-
-/**
- * NO modificar la interfaz de esta clase ni sus métodos públicos.
- * Sólo se podrá adaptar el nombre de la clase "Tarea" según sus decisiones
- * de implementación.
- */
 public class Servicios {
 	private HashMap<String, Tarea> tareas;
-	private HashMap<Boolean, List<Tarea>> tareasCriticasYNoCriticas; // Almacenar las tareas por criticidad
-	//private Procesadores procesadores; // Atributo no inicializado
+	private HashMap<Boolean, List<Tarea>> tareasCriticasYNoCriticas;
+	//private Procesadores procesadores;
 
-	/*
-	 * Expresar la complejidad temporal del constructor.
-	 */
+	//La complejidad del constructor de la clase Servicios es O(n), donde n es la cantidad de tareas almacenadas en los archivos CSV
 	public Servicios(String pathProcesadores, String pathTareas) {
-		//this.procesadores = new Procesadores(); // No se inicializa el atributo
 		CSVReader reader = new CSVReader();
-		this.tareas = reader.readTasksId(pathTareas);
-		this.tareasCriticasYNoCriticas = reader.readTasksCriticidad(pathTareas);
+		this.tareas = reader.readTasksId(pathTareas); // Complejidad O(n)
+		this.tareasCriticasYNoCriticas = reader.readTasksCriticidad(pathTareas); //Complejidad O(n)
 	}
 
-	/*
-	 * Complejidad temporal: O(1) para buscar y devolver las tareas.
-	 */
+	//Complejidad temporal: O(1) para buscar y devolver las tareas.
 	public Tarea servicio1(String ID) {
 		return tareas.get(ID);
 	}
@@ -40,9 +26,7 @@ public class Servicios {
 		return tareasCriticasYNoCriticas.getOrDefault(esCritica, Collections.emptyList());
 	}
 
-	/*
-	 * Complejidad temporal: O(n) donde n es la cantidad de tareas.
-	 */
+	// Complejidad temporal: O(n) donde n es la cantidad de tareas. Ver si se puede mejorar con un arbol binario de busqueda
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		List<Tarea> tareasFiltradas = new ArrayList<>();
 		for (Tarea tarea : tareas.values()) {

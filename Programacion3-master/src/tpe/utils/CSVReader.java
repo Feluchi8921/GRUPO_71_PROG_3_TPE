@@ -14,8 +14,8 @@ public class CSVReader {
 	public CSVReader() {
 
 	}
-	//Modificar el retorno para que me devuelva algo que pueda leer
-	//por ej que me devuelva una lista de tareas
+
+	//Guardo las tareas en un hashmap con clave: ID y valor: Tarea. Lo utilizo para el servicio 1
 	public HashMap<String, Tarea> readTasksId (String taskPath) {
 		HashMap<String, Tarea> task = new HashMap<>();
 		// Obtengo una lista con las lineas del archivo
@@ -41,31 +41,7 @@ public class CSVReader {
 		return task;
 	}
 
-	public List<Tarea> readTasks(String taskPath) {
-		List<Tarea> task = new ArrayList<>();
-		// Obtengo una lista con las lineas del archivo
-		// lines.get(0) tiene la primer linea del archivo
-		// lines.get(1) tiene la segunda linea del archivo... y así
-		ArrayList<String[]> lines = this.readContent(taskPath);
-
-		for (String[] line: lines) {
-			// Cada linea es un arreglo de Strings, donde cada posicion guarda un elemento
-			String id = line[0].trim();
-			String nombre = line[1].trim();
-			Integer tiempo = Integer.parseInt(line[2].trim());
-			Boolean critica = Boolean.parseBoolean(line[3].trim());
-			Integer prioridad = Integer.parseInt(line[4].trim());
-
-			// Crear un nuevo objeto Tarea con los datos leídos
-			Tarea tarea = new Tarea(id, nombre, tiempo, critica, prioridad);
-
-			// Agregar la tarea al mapa
-			task.add(tarea);
-		}
-
-		return task;
-	}
-
+	//Guardo las tareas en un hashmap con clave: critico y valor: lista de tareas. Lo utilizo en el servicio 2
 	public HashMap<Boolean, List<Tarea>> readTasksCriticidad (String taskPath) {
 		HashMap<Boolean, List<Tarea>> task = new HashMap<>();
 		// Obtengo una lista con las lineas del archivo
