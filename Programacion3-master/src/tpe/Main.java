@@ -1,5 +1,8 @@
 package tpe;
 import tpe.utils.CSVReader;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,8 +17,12 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
+		String nombreArchivo = "Tareas.csv";
+		Path ruta = Paths.get(nombreArchivo);
+		String rutaAbsoluta = ruta.toAbsolutePath().toString();
+		System.out.println("Ruta absoluta: " + rutaAbsoluta);
 		// Cargar las tareas y procesadores desde los archivos CSV
-		Servicios servicios = new Servicios("./src/tpe/datasets/Procesadores.csv", "C:\\Users\\Usuario\\Documents\\00 Prog 3\\Programacion3-TPE\\Programacion3-master\\src\\tpe\\datasets\\Tareas.csv");
+		Servicios servicios = new Servicios("Programacion3-master/src/tpe/datasets/Procesadores.csv", "Programacion3-master/src/tpe/datasets/Tareas.csv");
 		//System.out.println("--------------La tarea con ID T1 es:-------------");
 		//System.out.println(servicios.servicio1("T1"));
 		//System.out.println("--------------Las tareas criticas son:------------------- ");
