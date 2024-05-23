@@ -6,7 +6,7 @@ public class Tarea {
     private String idTarea;
     private String nombreTarea;
     private int tiempoEjecucion;
-    private boolean esCritica;
+    private boolean critica;
     private int nivelPrioridad;
 
 
@@ -15,11 +15,11 @@ public class Tarea {
         this.idTarea = idTarea;
         this.nombreTarea = nombreTarea;
         this.tiempoEjecucion = tiempoEjecucion;
-        this.esCritica = esCritica;
+        this.critica = esCritica;
         this.nivelPrioridad = nivelPrioridad;
     }
 
-    //Getters and Setters
+    //Se construyen solo los getters porque no se modifican las tareas entrantes
     public String getIdTarea() {
         return idTarea;
     }
@@ -28,33 +28,18 @@ public class Tarea {
         return nombreTarea;
     }
 
-    public void setNombreTarea(String nombreTarea) {
-        this.nombreTarea = nombreTarea;
-    }
-
     public int getTiempoEjecucion() {
         return tiempoEjecucion;
     }
 
-    public void setTiempoEjecucion(int tiempoEjecucion) {
-        this.tiempoEjecucion = tiempoEjecucion;
-    }
-
-    public boolean isEsCritica() {
-        return esCritica;
-    }
-
-    public void setEsCritica(boolean esCritica) {
-        this.esCritica = esCritica;
+    public boolean isCritica() {
+        return critica;
     }
 
     public int getNivelPrioridad() {
         return nivelPrioridad;
     }
 
-    public void setNivelPrioridad(int nivelPrioridad) {
-        this.nivelPrioridad = nivelPrioridad;
-    }
 
     //toString
     public String toString() {
@@ -62,7 +47,7 @@ public class Tarea {
                 "id='" + idTarea + '\'' +
                 ", nombre='" + nombreTarea + '\'' +
                 ", tiempo=" + tiempoEjecucion +
-                ", critica=" + esCritica +
+                ", critica=" + critica +
                 ", prioridad=" + nivelPrioridad +
                 '}';
     }
