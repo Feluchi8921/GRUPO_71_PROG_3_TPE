@@ -4,16 +4,18 @@ import tpe.utils.CSVReader;
 import java.util.*;
 
 public class Servicios {
+    private final int maxTareasCritPorProc = 2;
 	private ArrayList<Tarea> tareas;
 	private HashMap<String, Tarea> tareasId;
 	private HashMap<Boolean, List<Tarea>> tareasCriticidad;
 
-	//private Procesadores procesadores;
+	private Procesadores procesadores;
 
 	//La complejidad del constructor de la clase Servicios es O(n), donde n es la cantidad de tareas almacenadas en los archivos CSV
 	public Servicios(String pathProcesadores, String pathTareas) {
 		CSVReader reader = new CSVReader();
 		this.tareas = reader.readTasks(pathTareas);
+		this.procesadores = reader.readProcessors(pathProcesadores);
 		this.tareasId = new HashMap<>();
 		this.tareasCriticidad = new HashMap<>();
 		this.addTareas(this.tareas); //Se cargan las tareas en cada estructura
@@ -67,4 +69,5 @@ public class Servicios {
 			this.tareasCriticidad.put(t.isCritica(), tareasCriticidad);
 		}
 	}
+
 }

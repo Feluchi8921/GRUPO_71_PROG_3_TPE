@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.*;
 import tpe.Procesador;
+import tpe.Procesadores;
 import tpe.Tarea;
 
 
@@ -21,8 +22,7 @@ public class CSVReader {
 	ya que tiene la ventaja de utilizar un solo for de complejidad O(n).
 	Como no es responsabilidad de la clase CSVReader el manejo de las estructuras, se decidió hacerlo en
 	la clase Servicios, lo que aumenta la complejidad puesto que se debe utilizar otro for pra recorrer las
-	tareas y guardarlas en cada estructura, lo que lleva a una complejidad de 2.O(n), lo que hace aumentar
-	al doble la complejidad exponencial respecto de la cantidad de tareas.
+	tareas y guardarlas en cada estructura, lo que lleva a una complejidad de 2.O(n).
 	*/
 	public ArrayList<Tarea> readTasks (String taskPath) {
 		ArrayList<Tarea> tareas = new ArrayList<>();
@@ -44,8 +44,8 @@ public class CSVReader {
 	}
 
 	//----------------------------Procesadores----------------------
-	public LinkedList<Procesador> readProcessors(String processorPath) {
-		LinkedList<Procesador> processors = new LinkedList<>();
+	public Procesadores readProcessors(String processorPath) {
+		Procesadores processors = new Procesadores();
 
 		ArrayList<String[]> lines = this.readContent(processorPath);
 
@@ -57,7 +57,7 @@ public class CSVReader {
 
 			Procesador procesador = new Procesador(id, codigo, refrigerado, anio);
 
-			processors.add(procesador);
+			processors.addProcesador(procesador);
 		}
 
 		return processors;
