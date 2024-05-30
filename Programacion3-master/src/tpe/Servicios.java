@@ -4,21 +4,28 @@ import tpe.utils.CSVReader;
 import java.util.*;
 
 public class Servicios {
-    private final int maxTareasCritPorProc = 2;
+
+	//Atributos primera parte
 	private ArrayList<Tarea> tareas;
 	private HashMap<String, Tarea> tareasId;
 	private HashMap<Boolean, List<Tarea>> tareasCriticidad;
 
-	private Procesadores procesadores;
+	//Atributos segunda parte
+	private ArrayList<Procesador> procesadores;
+	private final int maxTareasCritPorProc = 100;
+	private int maxTiempoEjecucion;
+	private HashMap<Procesador, List<Tarea>> tareasAsignadas;
+
 
 	//La complejidad del constructor de la clase Servicios es O(n), donde n es la cantidad de tareas almacenadas en los archivos CSV
-	public Servicios(String pathProcesadores, String pathTareas) {
+	public Servicios(String pathProcesadores, String pathTareas) { //PReguntar si se hace la asignacion sobre la clase servicios o en otra clase
 		CSVReader reader = new CSVReader();
 		this.tareas = reader.readTasks(pathTareas);
-		this.procesadores = reader.readProcessors(pathProcesadores);
 		this.tareasId = new HashMap<>();
 		this.tareasCriticidad = new HashMap<>();
-		this.addTareas(this.tareas); //Se cargan las tareas en cada estructura
+		this.addTareas(this.tareas); //Se cargan las tareas en cada estructuras
+		this.procesadores = reader.readProcessors(pathProcesadores);
+		this.tareasAsignadas = new HashMap<>();
 	}
 
 	//Complejidad temporal: O(1) donde n es la cantidad de tareas
@@ -70,4 +77,67 @@ public class Servicios {
 		}
 	}
 
+	public void asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
+		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
+		List<Tarea> asignacion = new ArrayList<>();
+		if (asignarTareasBacktracking(0, asignacion)) {
+			System.out.println("Asignación exitosa:");
+			for (Procesador p : tareasAsignadas.keySet()) {
+				System.out.println(p + ": " + tareasAsignadas.get(p));
+			}
+		} else {
+			System.out.println("No es posible asignar todas las tareas.");
+		}
+	}
+
+	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion) {
+		if (tareaIndex == tareas.size()) {
+			return true;
+		}
+
+		Tarea tarea = tareas.get(tareaIndex);
+
+		for (Procesador procesador : procesadores) {
+			if (puedeAsignar(procesador, tarea)) {
+				asignar(procesador, tarea);
+				if (asignarTareasBacktracking(tareaIndex + 1, asignacion)) {
+					return true;
+				}
+				desasignar(procesador, tarea);
+			}
+		}
+
+		return false;
+	}
+
+	private boolean puedeAsignar(Procesador procesador, Tarea tarea) {
+		List<Tarea> tareasProcesador = tareasAsignadas.getOrDefault(procesador, new ArrayList<>());
+
+		if (tarea.isCritica()) {
+			long countCriticas = tareasProcesador.stream().filter(Tarea::isCritica).count();
+			if (countCriticas >= maxTareasCritPorProc) {
+				return false;
+			}
+		}
+
+		if (!procesador.isRefrigerado()) {
+			int tiempoTotal = tareasProcesador.stream().mapToInt(Tarea::getTiempoEjecucion).sum();
+			if (tiempoTotal + tarea.getTiempoEjecucion() > maxTiempoEjecucion) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void asignar(Procesador procesador, Tarea tarea) {
+		tareasAsignadas.putIfAbsent(procesador, new ArrayList<>());
+		tareasAsignadas.get(procesador).add(tarea);
+	}
+
+	private void desasignar(Procesador procesador, Tarea tarea) {
+		tareasAsignadas.get(procesador).remove(tarea);
+
+
+	}
 }

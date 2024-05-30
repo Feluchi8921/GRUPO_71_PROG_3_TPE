@@ -1,20 +1,27 @@
 package tpe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Procesador {
 
     //Atributos
     private String idProcesador;
     private String codigoProcesador;
-    private boolean estaRefrigerado;
+    private boolean refrigerado;
     private int anioFuncionamiento;
+    private List<Tarea> tareasAsignadas;
+    private int tiempoEjecucionTotal;
 
 
     //Constructor
-    public Procesador(String idProcesador, String codigoProcesador, boolean estaRefrigerado, int anioFuncionamiento) {
+    public Procesador(String idProcesador, String codigoProcesador, boolean refrigerado, int anioFuncionamiento) {
         this.idProcesador = idProcesador;
         this.codigoProcesador = codigoProcesador;
-        this.estaRefrigerado = estaRefrigerado;
+        this.refrigerado = refrigerado;
         this.anioFuncionamiento = anioFuncionamiento;
+        this.tareasAsignadas = new ArrayList<>();
+        this.tiempoEjecucionTotal = 0;
     }
 
     //Getters and Setters
@@ -26,32 +33,29 @@ public class Procesador {
         return codigoProcesador;
     }
 
-    public void setCodigoProcesador(String codigoProcesador) {
-        this.codigoProcesador = codigoProcesador;
-    }
-
-    public boolean isEstaRefrigerado() {
-        return estaRefrigerado;
-    }
-
-    public void setEstaRefrigerado(boolean estaRefrigerado) {
-        this.estaRefrigerado = estaRefrigerado;
+    public boolean isRefrigerado() {
+        return refrigerado;
     }
 
     public int getAnioFuncionamiento() {
         return anioFuncionamiento;
     }
 
-    public void setAnioFuncionamiento(int anioFuncionamiento) {
-        this.anioFuncionamiento = anioFuncionamiento;
+    public void addTareaAsignada(Tarea t){
+        this.tareasAsignadas.add(t);
     }
-
+    public List<Tarea> getListaTareasAsociadas(Procesador p){
+        return this.tareasAsignadas;
+    }
+    public int getTiempoEjecucionTotal(int t){
+        return tiempoEjecucionTotal+=t;
+    }
     //toString
     public String toString() {
         return "Procesador{" +
                 "id='" + idProcesador + '\'' +
                 ", codigo='" + codigoProcesador + '\'' +
-                ", refrigerado=" + estaRefrigerado +
+                ", refrigerado=" + refrigerado +
                 ", anio=" + anioFuncionamiento +
                 '}';
     }

@@ -17,10 +17,7 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
-		String nombreArchivo = "Tareas.csv";
-		Path ruta = Paths.get(nombreArchivo);
-		String rutaAbsoluta = ruta.toAbsolutePath().toString();
-		System.out.println("Ruta absoluta: " + rutaAbsoluta);
+
 		// Cargar las tareas y procesadores desde los archivos CSV
 		Servicios servicios = new Servicios("Programacion3-master/src/tpe/datasets/Procesadores.csv", "Programacion3-master/src/tpe/datasets/Tareas.csv");
 		//System.out.println("--------------La tarea con ID T1 es:-------------");
@@ -30,7 +27,7 @@ public class Main {
 		//System.out.println("--------------Las tareas no criticas son:------------------- ");
 		//System.out.println(servicios.servicio2(false));
 		// Scanner para leer la entrada del usuario
-		Scanner scanner = new Scanner(System.in);
+		/*Scanner scanner = new Scanner(System.in);
 
 		int opcion;
 		do {
@@ -96,5 +93,11 @@ public class Main {
 		} while (opcion != 4);
 
 		scanner.close();
+		*/
+		// Define the max execution time for non-refrigerated processors
+		int tiempoMaxNoRefrigerado = 100;
+
+		// Run the backtracking task assignment
+		servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
 	}
 }

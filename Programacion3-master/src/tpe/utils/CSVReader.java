@@ -44,8 +44,8 @@ public class CSVReader {
 	}
 
 	//----------------------------Procesadores----------------------
-	public Procesadores readProcessors(String processorPath) {
-		Procesadores processors = new Procesadores();
+	public ArrayList<Procesador> readProcessors(String processorPath) {
+		ArrayList<Procesador> processors = new ArrayList<>();
 
 		ArrayList<String[]> lines = this.readContent(processorPath);
 
@@ -57,7 +57,7 @@ public class CSVReader {
 
 			Procesador procesador = new Procesador(id, codigo, refrigerado, anio);
 
-			processors.addProcesador(procesador);
+			processors.add(procesador);
 		}
 
 		return processors;
