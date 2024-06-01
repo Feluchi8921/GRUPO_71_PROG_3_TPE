@@ -11,7 +11,7 @@ public class Procesador {
     private boolean refrigerado;
     private int anioFuncionamiento;
     private List<Tarea> tareasAsignadas;
-    private int tiempoEjecucionTotal;
+    //private int tiempoEjecucionTotal;
 
 
     //Constructor
@@ -21,7 +21,7 @@ public class Procesador {
         this.refrigerado = refrigerado;
         this.anioFuncionamiento = anioFuncionamiento;
         this.tareasAsignadas = new ArrayList<>();
-        this.tiempoEjecucionTotal = 0;
+        //this.tiempoEjecucionTotal = 0;
     }
 
     //Getters and Setters
@@ -44,12 +44,16 @@ public class Procesador {
     public void addTareaAsignada(Tarea t){
         this.tareasAsignadas.add(t);
     }
-    public List<Tarea> getListaTareasAsociadas(Procesador p){
+   /* public List<Tarea> getListaTareasAsociadas(Procesador p){
         return this.tareasAsignadas;
     }
-    public int getTiempoEjecucionTotal(int t){
-        return tiempoEjecucionTotal+=t;
-    }
+    public int getTiempoEjecucionTotal(){
+        int tiempo=0;
+        for(Tarea t: tareasAsignadas){
+            tiempo+=t.getTiempoEjecucion();
+        }
+        return tiempo;
+    }*/
     //toString
     public String toString() {
         return "Procesador{" +

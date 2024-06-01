@@ -3,7 +3,9 @@ import tpe.utils.CSVReader;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -99,5 +101,31 @@ public class Main {
 
 		// Run the backtracking task assignment
 		servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
+		System.out.println("-----------------Backtracking------------------------");
+		// Obtener una copia del HashMap de tareas asignadas
+		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.copiaTareasAsignadas();
+
+		// Imprimir el contenido del HashMap
+		for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
+			Procesador procesador = entry.getKey();
+			List<Tarea> tareas = entry.getValue();
+			System.out.println("-"+procesador);
+			for (Tarea tarea : tareas) {
+				System.out.println("  - "+tarea);
+			}
+		}
+
+		System.out.println("-----------Greedy--------------------------------------");
+		System.out.println("Tiempo máximo no refrigerado: " + tiempoMaxNoRefrigerado);
+		for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
+			Procesador procesador = entry.getKey();
+			List<Tarea> tareas = entry.getValue();
+			System.out.println("- " + procesador);
+			for (Tarea tarea : tareas) {
+				System.out.println("  - " + tarea);
+			}
+		}
+
 	}
 }
+
