@@ -97,7 +97,7 @@ public class Main {
 		scanner.close();
 		*/
 		// Define the max execution time for non-refrigerated processors
-		int tiempoMaxNoRefrigerado = 100;
+		int tiempoMaxNoRefrigerado = 200;
 
 		// Run the backtracking task assignment
 		servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
@@ -112,17 +112,6 @@ public class Main {
 			System.out.println("-"+procesador);
 			for (Tarea tarea : tareas) {
 				System.out.println("  - "+tarea);
-			}
-		}
-
-		System.out.println("-----------Greedy--------------------------------------");
-		System.out.println("Tiempo máximo no refrigerado: " + tiempoMaxNoRefrigerado);
-		for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
-			Procesador procesador = entry.getKey();
-			List<Tarea> tareas = entry.getValue();
-			System.out.println("- " + procesador);
-			for (Tarea tarea : tareas) {
-				System.out.println("  - " + tarea);
 			}
 		}
 

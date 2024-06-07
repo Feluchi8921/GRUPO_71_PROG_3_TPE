@@ -16,7 +16,8 @@ public class Servicios {
 	private final int maxTareasCritPorProc = 2;
 	private int maxTiempoEjecucion;
 	private HashMap<Procesador, List<Tarea>> tareasAsignadas;
-
+	private int tiempoMejor;
+	private List<Tarea> tareasMejor;
 
 	//La complejidad del constructor de la clase Servicios es O(n), donde n es la cantidad de tareas almacenadas en los archivos CSV
 	public Servicios(String pathProcesadores, String pathTareas) {
@@ -27,6 +28,8 @@ public class Servicios {
 		this.addTareas(this.tareas); //Se cargan las tareas en cada estructura
 		this.procesadores = reader.readProcessors(pathProcesadores);
 		this.tareasAsignadas = new HashMap<>();
+		this.tiempoMejor =  Integer.MAX_VALUE; // Inicializar a un valor grande
+		this.tareasMejor = new ArrayList<>();
 	}
 
 	//-------------------------------Servicio 1:-------------------------------------------------
@@ -87,36 +90,45 @@ public class Servicios {
 	/*La complejidad temporal de este método es O(n^m), donde n es la cantidad de tareas y m es la cantidad de procesadores.
 	Esto se debe a que el algoritmo de backtracking puede generar un número exponencial de posibles asignaciones.*/
 
+
 	public HashMap<Procesador, List<Tarea>> asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
 		List<Tarea> asignacion = new ArrayList<>();
-		if (asignarTareasBacktracking(0, asignacion)) {
-			//Devuelvo una copia de las tareas Asignadas
+		if (asignarTareasBacktracking(0, asignacion, 0)) {
+			// Devuelvo una copia de las tareas Asignadas
 			return copiaTareasAsignadas();
-			}
+		}
 		return null;
 	}
 
-	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion) {
-		//Si el indice actual es igual a la cant de tareas es porque se asignaron todas
+	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion, int tiempoParcial) {
+		// Si el indice actual es igual a la cant de tareas es porque se asignaron todas
 		if (tareaIndex == tareas.size()) {
-			return true;
+			if (tiempoParcial < tiempoMejor) {
+				tiempoMejor = tiempoParcial;
+				//System.out.println(tiempoMejor);
+				return true;
+			}
+			return false;
 		}
 
-		//Sino obtengo la tarea del indice actual
+		// Obtengo la tarea del indice actual
 		Tarea tarea = tareas.get(tareaIndex);
 
-		//Recorro los procesadores
+		// Recorro los procesadores
 		for (Procesador procesador : procesadores) {
-			//Verifico si es asignable
+			// Verifico si es asignable
 			if (puedeAsignar(procesador, tarea)) {
-				//La agrego
+				// Calculo el nuevo tiempo parcial
+				int nuevoTiempoParcial = tiempoParcial + tarea.getTiempoEjecucion();
+				// La agrego
 				asignar(procesador, tarea);
-				//Llamo a la recursion con el siguiente índice de tarea y la asignacion actual
-				if (asignarTareasBacktracking(tareaIndex + 1, asignacion)) {
+
+				// Llamo a la recursion con el siguiente índice de tarea y la asignacion actual
+				if (asignarTareasBacktracking(tareaIndex + 1, asignacion, nuevoTiempoParcial)) {
 					return true;
 				}
-				//Elimino el agregar
+				// Elimino el agregar
 				desasignar(procesador, tarea);
 			}
 		}
@@ -124,52 +136,58 @@ public class Servicios {
 		return false;
 	}
 
+	//Métodos de soporte omitidos para brevedad
+
 	//Metodo que se encarga de establecer las condiciones de asignacion de tareas
 	private boolean puedeAsignar(Procesador procesador, Tarea tarea) {
-		List<Tarea> tareasProcesador = tareasAsignadas.getOrDefault(procesador, new ArrayList<>()); //Si no hay tareas asignadas al procesador, se crea una nueva lista vacía.
+		List<Tarea> tareasProcesador = tareasAsignadas.getOrDefault(procesador, new ArrayList<>());
 
 		if (tarea.isCritica()) {
-			//Si la tarea es crítica, se cuenta el número de tareas críticas ya asignadas al procesador
 			long countCriticas = tareasProcesador.stream().filter(Tarea::isCritica).count();
 			if (countCriticas >= maxTareasCritPorProc) {
-				//Si ya tiene asignadas dos tareas criticas, no se asigna
 				return false;
 			}
 		}
-		//Si el procesador no es refrigerado, se calcula el tiempo total de ejecución actual del procesador
-		//sumando el tiempo de ejecución de las tareas ya asignadas (tareasProcesador) con el tiempo de ejecución de la nueva tarea
+
 		if (!procesador.isRefrigerado()) {
 			int tiempoTotal = tareasProcesador.stream().mapToInt(Tarea::getTiempoEjecucion).sum();
 			if (tiempoTotal + tarea.getTiempoEjecucion() > maxTiempoEjecucion) {
-				//Si supera el tiempoMaximo establecido por el usuario, no se asigna
 				return false;
 			}
 		}
-		//La tarea puede asignarse
+
 		return true;
 	}
 
 	//Este metodo asigna las tareas al procesador
 	private void asignar(Procesador procesador, Tarea tarea) {
-		//Si el procesador no tiene una lista asignada se crea una nueva
 		tareasAsignadas.putIfAbsent(procesador, new ArrayList<>());
-		//Se agrega la tarea asignada
 		tareasAsignadas.get(procesador).add(tarea);
 		procesador.addTareaAsignada(tarea);
 	}
 
-	//Este metodo elimina la asignación de la tarea al procesador removiéndola de la lista de tareas asociadas
-	// al procesador en el HashMap tareasAsignadas
 	private void desasignar(Procesador procesador, Tarea tarea) {
 		tareasAsignadas.get(procesador).remove(tarea);
 	}
 
-
 	public HashMap<Procesador, List<Tarea>> copiaTareasAsignadas() {
 		HashMap<Procesador, List<Tarea>> copiaBacktracking = new HashMap<>();
 		for (Procesador p : tareasAsignadas.keySet()) {
-			copiaBacktracking.put(p, tareasAsignadas.get(p));
+			copiaBacktracking.put(p, new ArrayList<>(tareasAsignadas.get(p)));
 		}
 		return copiaBacktracking;
 	}
+
+	public int getTiempoEjecucion(List<Tarea> asignacion){
+		int tiempo = 0;
+		for(Tarea t : asignacion){
+			tiempo += t.getTiempoEjecucion();
+		}
+		return tiempo;
+	}
 }
+
+
+
+//procesador.getCopia en la clase procesadores
+//Comparar el estado actual con la solucion si es de menor tiempo de ejecucion

@@ -1,78 +1,14 @@
-T1;Tarea1;50;true;92
-T2;Tarea2;10;false;31
-T3;Tarea3;100;false;70
-T4;Tarea4;20;true;58
-T5;Tarea de Depuración 5;65;true;46
-T6;Tarea de Análisis 6;80;false;29
-T7;Tarea de Documentación 7;40;true;95
-T8;Tarea de Planificación 8;32;false;14
-T9;Tarea de Integración 9;72;true;61
-T10;Tarea de Testing 10;54;false;83
-T11;Tarea de Despliegue 11;98;true;34
-T12;Tarea de Monitoreo 12;26;false;77
-T13;Tarea de Capacitación 13;84;true;53
-T14;Tarea de Soporte 14;18;false;91
-T15;Tarea de Refactorización 15;77;false;40
-T16;Tarea de Pruebas de Carga 16;96;true;67
-T17;Tarea de Localización 17;38;false;81
-T18;Tarea de Traducción 18;56;true;25
-T19;Tarea de Depuración de Rendimiento 19;69;false;97
-T20;Tarea de Optimización de Memoria 20;81;true;16
-T21;Tarea de Integración Continua 21;44;false;30
-T22;Tarea de Implementación de Pruebas Unitarias 22;94;true;55
-T23;Tarea de Documentación de API 23;36;false;79
-T24;Tarea de Creación de Tickets de Soporte 24;12;true;93
-T25;Tarea de Gestión de Incidencias 25;50;false;23
-T26;Tarea de Resolución de Problemas 26;73;true;49
-T27;Tarea de Actualización de Base de Datos 27;91;false;86
-T28;Tarea de Migración de Datos 28;28;true;60
-T29;Tarea de Seguridad de Datos 30;62;false;100
-T30;Tarea de Auditoría de Seguridad 31;85;true;38
-T31;Tarea de Implementación de Políticas de Seguridad 32;47;false;72
-T32;Tarea de Capacitación en Seguridad 33;64;true;52
-T33;Tarea de Gestión de Riesgos 34;88;false;90
-T34;Tarea de Planificación de Continuidad del Negocio 35;29;true;18
-T35;Tarea de Desarrollo de GUI 36;59;false;27
-T36;Tarea de Diseño de Interfaz de Usuario 37;76;true;43
-T37;Tarea de Implementación de Accesibilidad 38;33;false;82
-T38;Tarea de Pruebas de Accesibilidad 39;95;true;6
-T39;Tarea de Optimización de Rendimiento Web 40;21;false;99
-T40;Tarea de Optimización de SEO 41;83;true;11
-T41;Tarea de Monitoreo del Desempeño del Sitio Web 42;43;false;32
-T42;Tarea de Análisis de Seguridad del Sitio Web 43;66;true;57
-T43;Tarea de Implementación de Medidas de Seguridad del Sitio Web 44;89;false;15
-T44;Tarea de Gestión de Cambios 45;25;true;75
-T45;Tarea de Implementación de Control de Versiones 46;97;false;21
-T46;Tarea de Revisiones de Código 47;31;true;45
-T47;Tarea de Integración de Código 48;53;false;87
-T48;Tarea de Despliegue de Código 49;71;true;63
-T49;Tarea de Documentación del Código 50;93;false;19
-T50;Tarea de Mantenimiento del Código 51;39;true;35
-T51;Tarea de Depuración de Código 52;57;false;71
-T52;Tarea de Refactorización de Código 53;75;true;59
-T53;Tarea de Optimización de Código 54;99;false;13
-T54;Tarea de Gestión de Entregas 55;20;true;94
-T55;Tarea de Planificación de Sprints 56;42;false;28
-T56;Tarea de Seguimiento de Proyectos 57;60;true;44
-T57;Tarea de Gestión de Riesgos del Proyecto 58;82;false;80
-T58;Tarea de Comunicación del Proyecto 59;40;true;64
-T60;Tarea de Gestión de Recursos del Proyecto 60;64;false;17
-T61;Tarea de Desarrollo de Aplicaciones Móviles 62;90;true;36
-T62;Tarea de Diseño de Interfaz de Usuario Móvil 63;52;false;70
-T63;Tarea de Implementación de Funcionalidades Móviles 64;70;true;54
-T64;Tarea de Pruebas de Aplicaciones Móviles 65;34;false;96
-T65;Tarea de Despliegue de Aplicaciones Móviles 66;98;true;10
-T66;Tarea de Mantenimiento de Aplicaciones Móviles 67;26;false;84
-T67;Tarea de Actualización de Aplicaciones Móviles 68;48;true;22
-T68;Tarea de Soporte de Aplicaciones Móviles 69;66;false;48
-T69;Tarea de Gestión de Infraestructura 70;84;true;62
-T70;Tarea de Provisionamiento de Servidores 71;46;false;98
-T71;Tarea de Configuración de Red 72;68;true;14
-T72;Tarea de Administración de Bases de Datos 73;86;false;30
-T73;Tarea de Seguridad de la Infraestructura 74;44;true;56
-T74;Tarea de Monitoreo de la Infraestructura 75;62;false;74
-T75;Tarea de Resolución de Problemas de Infraestructura 76;80;true;50
-T76;Tarea de Gestión de Licencias 77;40;false;92
-T77;Tarea de Negociación de Contratos 78;60;true;26
-T78;Tarea de Gestión de Proveedores 79;82;false;42
-T79;Tarea de Gestión de Presupuestos 80;44;true;68
+T1;Tarea1;69;true;64
+T2;Tarea2;12;true;40
+T3;Tarea3;28;false;56
+T4;Tarea4;62;false;59
+T5;Tarea5;34;true;73
+T6;Tarea6;65;true;63
+T7;Tarea7;37;true;66
+T8;Tarea8;43;false;58
+T9;Tarea9;24;false;72
+T10;Tarea10;64;false;52
+T11;Tarea11;82;false;55
+T12;Tarea12;67;false;89
+T13;Tarea13;98;false;82
+T14;Tarea14;39;true;46
