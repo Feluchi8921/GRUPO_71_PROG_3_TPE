@@ -18,6 +18,7 @@ public class Servicios {
 	private HashMap<Procesador, List<Tarea>> tareasAsignadas;
 	private int tiempoMejor;
 	private List<Tarea> tareasMejor;
+	private int estadosGenerados;
 
 	//La complejidad del constructor de la clase Servicios es O(n), donde n es la cantidad de tareas almacenadas en los archivos CSV
 	public Servicios(String pathProcesadores, String pathTareas) {
@@ -30,6 +31,7 @@ public class Servicios {
 		this.tareasAsignadas = new HashMap<>();
 		this.tiempoMejor =  Integer.MAX_VALUE; // Inicializar a un valor grande
 		this.tareasMejor = new ArrayList<>();
+		this.estadosGenerados=0;
 	}
 
 	//-------------------------------Servicio 1:-------------------------------------------------
@@ -92,21 +94,23 @@ public class Servicios {
 
 
 	public HashMap<Procesador, List<Tarea>> asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
+		//Le asigno el valor a los procesadores np refirgerados
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
 		List<Tarea> asignacion = new ArrayList<>();
 		if (asignarTareasBacktracking(0, asignacion, 0)) {
 			// Devuelvo una copia de las tareas Asignadas
-			return copiaTareasAsignadas();
+			return getTareasAsignadas();
 		}
-		return null;
+			return new HashMap<>();
 	}
 
 	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion, int tiempoParcial) {
+		//LLevo la cuenta de los estados generados
+		this.estadosGenerados++;
 		// Si el indice actual es igual a la cant de tareas es porque se asignaron todas
 		if (tareaIndex == tareas.size()) {
 			if (tiempoParcial < tiempoMejor) {
 				tiempoMejor = tiempoParcial;
-				//System.out.println(tiempoMejor);
 				return true;
 			}
 			return false;
@@ -121,9 +125,9 @@ public class Servicios {
 			if (puedeAsignar(procesador, tarea)) {
 				// Calculo el nuevo tiempo parcial
 				int nuevoTiempoParcial = tiempoParcial + tarea.getTiempoEjecucion();
+				//System.out.println(nuevoTiempoParcial);
 				// La agrego
 				asignar(procesador, tarea);
-
 				// Llamo a la recursion con el siguiente índice de tarea y la asignacion actual
 				if (asignarTareasBacktracking(tareaIndex + 1, asignacion, nuevoTiempoParcial)) {
 					return true;
@@ -135,8 +139,6 @@ public class Servicios {
 
 		return false;
 	}
-
-	//Métodos de soporte omitidos para brevedad
 
 	//Metodo que se encarga de establecer las condiciones de asignacion de tareas
 	private boolean puedeAsignar(Procesador procesador, Tarea tarea) {
@@ -164,18 +166,15 @@ public class Servicios {
 		tareasAsignadas.putIfAbsent(procesador, new ArrayList<>());
 		tareasAsignadas.get(procesador).add(tarea);
 		procesador.addTareaAsignada(tarea);
+		//System.out.println(tareasAsignadas+"\n");
 	}
 
 	private void desasignar(Procesador procesador, Tarea tarea) {
 		tareasAsignadas.get(procesador).remove(tarea);
 	}
 
-	public HashMap<Procesador, List<Tarea>> copiaTareasAsignadas() {
-		HashMap<Procesador, List<Tarea>> copiaBacktracking = new HashMap<>();
-		for (Procesador p : tareasAsignadas.keySet()) {
-			copiaBacktracking.put(p, new ArrayList<>(tareasAsignadas.get(p)));
-		}
-		return copiaBacktracking;
+	public HashMap<Procesador, List<Tarea>> getTareasAsignadas() {
+		return this.tareasAsignadas;
 	}
 
 	public int getTiempoEjecucion(List<Tarea> asignacion){
@@ -185,9 +184,74 @@ public class Servicios {
 		}
 		return tiempo;
 	}
+
+	//Metodo que devuelve la cantidad de estados de Backtracking
+	public int getEstadosGenerados() {
+		return estadosGenerados;
+	}
+
+	//Tiempo de ejecucion (El procesador que más tarda)
+	public int getMaxTiempoEjecucion() {
+		int maxTiempo = 0;
+		for (Map.Entry<Procesador, List<Tarea>> entry : this.tareasAsignadas.entrySet()) {
+			Procesador procesador = entry.getKey();
+			List<Tarea> tareas = entry.getValue();
+			int tiempoEjecucionProcesador = getTiempoEjecucion(tareas);
+			if (tiempoEjecucionProcesador > maxTiempo) {
+				maxTiempo = tiempoEjecucionProcesador;
+			}
+		}
+		return maxTiempo;
+	}
+
+	public void imprimirMaxTiempoEjecucion() {
+		int maxTiempo = getMaxTiempoEjecucion();
+		System.out.println("El tiempo máximo de ejecución es: " + maxTiempo);
+	}
+
+
+	//-------------------------------Greedy Algorithm------------------------------------------------------------------------
+
+    /*La complejidad temporal de este método es O(n log m), donde n es la cantidad de tareas y m es la cantidad de procesadores.
+    Esto se debe a que en cada iteración se selecciona el procesador con el menor tiempo total de ejecución, que puede lograrse utilizando una cola de prioridad.*/
+
+	public HashMap<Procesador, List<Tarea>> asignarTareasGreedy(int tiempoMaxNoRefrigerado) {
+		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
+		this.tareasAsignadas = new HashMap<>();
+
+		PriorityQueue<Procesador> minHeap = new PriorityQueue<>(Comparator.comparingInt(this::getTiempoEjecucionProcesador));
+
+		for (Procesador procesador : procesadores) {
+			this.tareasAsignadas.put(procesador, new ArrayList<>());
+			minHeap.offer(procesador);
+		}
+
+		for (Tarea tarea : tareas) {
+			boolean asignada = false;
+
+			while (!asignada && !minHeap.isEmpty()) {
+				Procesador procesador = minHeap.poll();
+
+				if (puedeAsignar(procesador, tarea)) {
+					asignar(procesador, tarea);
+					asignada = true;
+				}
+
+				minHeap.offer(procesador);
+			}
+
+			if (!asignada) {
+				return null; // No es posible realizar la asignación
+			}
+		}
+
+		getTareasAsignadas();
+		return tareasAsignadas;
+	}
+
+	private int getTiempoEjecucionProcesador(Procesador procesador) {
+		return tareasAsignadas.get(procesador).stream().mapToInt(Tarea::getTiempoEjecucion).sum();
+	}
+
+
 }
-
-
-
-//procesador.getCopia en la clase procesadores
-//Comparar el estado actual con la solucion si es de menor tiempo de ejecucion

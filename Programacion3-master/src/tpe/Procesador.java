@@ -11,7 +11,7 @@ public class Procesador {
     private boolean refrigerado;
     private int anioFuncionamiento;
     private List<Tarea> tareasAsignadas;
-    //private int tiempoEjecucionTotal;
+
 
 
     //Constructor
@@ -43,17 +43,22 @@ public class Procesador {
 
     public void addTareaAsignada(Tarea t){
         this.tareasAsignadas.add(t);
+        //printTareasAsignadas();
     }
-   /* public List<Tarea> getListaTareasAsociadas(Procesador p){
-        return this.tareasAsignadas;
+
+    public List<Tarea> getTareasAsignadas() {
+        return tareasAsignadas;
     }
-    public int getTiempoEjecucionTotal(){
-        int tiempo=0;
-        for(Tarea t: tareasAsignadas){
-            tiempo+=t.getTiempoEjecucion();
+
+    public void printTareasAsignadas(){
+        int count=0;
+        int total =0;
+        for(int i=0; i<this.tareasAsignadas.size(); i++){
+            System.out.println(tareasAsignadas.get(i));
+            count++;
         }
-        return tiempo;
-    }*/
+        }
+
     //toString
     public String toString() {
         return "Procesador{" +

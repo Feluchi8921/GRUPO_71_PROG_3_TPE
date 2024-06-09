@@ -1,120 +1,68 @@
 package tpe;
 import tpe.utils.CSVReader;
-
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.Optional;
 
-/**
- * Ejemplo de código `main` para probar la clase `Servicios`.
- *
- * Este código permite:
- * 1. Obtener una tarea por su ID (servicio 1).
- * 2. Obtener la lista de tareas críticas o no críticas (servicio 2).
- * 3. Obtener la lista de tareas dentro de un rango de prioridad (servicio 3).
- */
 public class Main {
 
 	public static void main(String[] args) {
 
 		// Cargar las tareas y procesadores desde los archivos CSV
 		Servicios servicios = new Servicios("Programacion3-master/src/tpe/datasets/Procesadores.csv", "Programacion3-master/src/tpe/datasets/Tareas.csv");
-		//System.out.println("--------------La tarea con ID T1 es:-------------");
-		//System.out.println(servicios.servicio1("T1"));
-		//System.out.println("--------------Las tareas criticas son:------------------- ");
-		//System.out.println(servicios.servicio2(true));
-		//System.out.println("--------------Las tareas no criticas son:------------------- ");
-		//System.out.println(servicios.servicio2(false));
-		// Scanner para leer la entrada del usuario
-		/*Scanner scanner = new Scanner(System.in);
 
-		int opcion;
-		do {
-			System.out.println("\n\nMenú de servicios:");
-			System.out.println("1. Obtener tarea por ID");
-			System.out.println("2. Obtener tareas críticas o no críticas");
-			System.out.println("3. Obtener tareas por rango de prioridad");
-			System.out.println("4. Salir");
-			System.out.print("Ingrese una opción: ");
+		//----------------------------------Servicios 1, 2 y 3-------------------------------------
+		System.out.println("--------------La tarea con ID T1 es:-------------");
+		System.out.println(servicios.servicio1("T1"));
+		System.out.println("\n--------------Las tareas criticas son:------------------- ");
+		System.out.println(servicios.servicio2(true));
+		System.out.println("\n--------------Las tareas no criticas son:------------------- ");
+		System.out.println(servicios.servicio2(false));
 
-			opcion = scanner.nextInt();
-			scanner.nextLine(); // Consumir el salto de línea
 
-			switch (opcion) {
-				case 1:
-					System.out.print("Ingrese el ID de la tarea: ");
-					String idTarea = scanner.nextLine();
-					Tarea tarea = servicios.servicio1(idTarea);
-					if (tarea != null) {
-						System.out.println("\nTarea encontrada:");
-						System.out.println(tarea);
-					} else {
-						System.out.println("\nTarea no encontrada con el ID: " + idTarea);
-					}
-					break;
-				case 2:
-					System.out.print("¿Desea obtener tareas críticas (true) o no críticas (false)? ");
-					boolean esCritica = scanner.nextBoolean();
-					scanner.nextLine(); // Consumir el salto de línea
-					List<Tarea> tareas = servicios.servicio2(esCritica);
-					if (!tareas.isEmpty()) {
-						System.out.println("\nLista de tareas " + (esCritica ? "críticas" : "no críticas") + ":");
-						for (Tarea t : tareas) {
-							System.out.println(t);
-						}
-					} else {
-						System.out.println("\nNo se encontraron tareas " + (esCritica ? "críticas" : "no críticas"));
-					}
-					break;
-				case 3:
-					System.out.print("Ingrese la prioridad inferior: ");
-					int prioridadInferior = scanner.nextInt();
-					scanner.nextLine(); // Consumir el salto de línea
-					System.out.print("Ingrese la prioridad superior: ");
-					int prioridadSuperior = scanner.nextInt();
-					scanner.nextLine(); // Consumir el salto de línea
-					List<Tarea> tareasRango = servicios.servicio3(prioridadInferior, prioridadSuperior);
-					if (!tareasRango.isEmpty()) {
-						System.out.println("\nLista de tareas en el rango de prioridad [" + prioridadInferior + "," + prioridadSuperior + "]:");
-						for (Tarea t : tareasRango) {
-							System.out.println(t);
-						}
-					} else {
-						System.out.println("\nNo se encontraron tareas en el rango de prioridad especificado.");
-					}
-					break;
-				case 4:
-					System.out.println("Saliendo del programa...");
-					break;
-				default:
-					System.out.println("Opción no válida. Intente nuevamente.");
-			}
-		} while (opcion != 4);
+		int tiempoMaxNoRefrigerado = 100;
 
-		scanner.close();
-		*/
-		// Define the max execution time for non-refrigerated processors
-		int tiempoMaxNoRefrigerado = 200;
+		System.out.println("\n-----------Asignación Backtracking:-------------------\n");
+		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
+		if (tareasAsignadas != null && !tareasAsignadas.isEmpty()) {
+			System.out.println("Asignación Backtracking exitosa:");
+			for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
+				Procesador procesador = entry.getKey();
+				List<Tarea> tareas = entry.getValue();
 
-		// Run the backtracking task assignment
-		servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
-		System.out.println("-----------------Backtracking------------------------");
-		// Obtener una copia del HashMap de tareas asignadas
-		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.copiaTareasAsignadas();
-
-		// Imprimir el contenido del HashMap
-		for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
-			Procesador procesador = entry.getKey();
-			List<Tarea> tareas = entry.getValue();
-			System.out.println("-"+procesador);
-			for (Tarea tarea : tareas) {
-				System.out.println("  - "+tarea);
+				System.out.println("\n+Procesador: " + procesador);
+				System.out.println(" -Tareas asignadas:");
+				for (Tarea tarea : tareas) {
+					System.out.println("	- " + tarea);
+				}
 			}
 		}
+		else{
+			System.out.println("No es posible realizar la asignación");
+		}
+		System.out.println("\n-----------Métrica (cantidad de datos considerados): -------------------");
+		System.out.println("\nLos estados generados fueron: "+servicios.getEstadosGenerados());
+		System.out.println("\nEl tiempo máximo de ejecución (dado por el procesador que más tarda), es:\n");
 
+
+		/*System.out.println("-----------------Greedy------------------------");
+		// Asignar tareas usando el algoritmo greedy
+		HashMap<Procesador, List<Tarea>> asignacion = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
+
+		// Imprimir resultado de la asignación
+		if (asignacion != null) {
+			System.out.println("Asignación Greedy exitosa:");
+			for (Procesador procesador : asignacion.keySet()) {
+				System.out.println("+Procesador: " + procesador);
+				System.out.println(" -Tareas asignadas:");
+				for (Tarea tarea : asignacion.get(procesador)) {
+					System.out.println("    - " + tarea);
+				}
+			}
+		} else {
+			System.out.println("No es posible realizar la asignación");
+		}*/
 	}
 }
 
