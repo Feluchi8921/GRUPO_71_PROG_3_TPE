@@ -20,7 +20,7 @@ public class CSVReader {
 	Primeramente se utilizó esta clase para leer y guardar los datos en las estructuras a utilizar,
 	ya que tiene la ventaja de utilizar un solo for de complejidad O(n).
 	Como no es responsabilidad de la clase CSVReader el manejo de las estructuras, se decidió hacerlo en
-	la clase Servicios, lo que aumenta la complejidad puesto que se debe utilizar otro for pra recorrer las
+	la clase Servicios, lo que aumenta la complejidad puesto que se debe utilizar otro for para recorrer las
 	tareas y guardarlas en cada estructura, lo que lleva a una complejidad de 2.O(n).
 	*/
 	public ArrayList<Tarea> readTasks (String taskPath) {
