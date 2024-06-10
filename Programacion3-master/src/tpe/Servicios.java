@@ -1,6 +1,4 @@
 package tpe;
-
-import com.sun.source.tree.NewArrayTree;
 import tpe.utils.CSVReader;
 import java.util.*;
 
@@ -17,8 +15,9 @@ public class Servicios {
 	private int maxTiempoEjecucion;
 	private HashMap<Procesador, List<Tarea>> tareasAsignadas;
 	private int tiempoMejor;
-	private List<Tarea> tareasMejor;
-	private int estadosGenerados;
+	private int estadosGeneradosBack;
+	private int estadosGeneradosGreedy;
+
 
 	//La complejidad del constructor de la clase Servicios es O(n), donde n es la cantidad de tareas almacenadas en los archivos CSV
 	public Servicios(String pathProcesadores, String pathTareas) {
@@ -30,8 +29,8 @@ public class Servicios {
 		this.procesadores = reader.readProcessors(pathProcesadores);
 		this.tareasAsignadas = new HashMap<>();
 		this.tiempoMejor =  Integer.MAX_VALUE; // Inicializar a un valor grande
-		this.tareasMejor = new ArrayList<>();
-		this.estadosGenerados=0;
+		this.estadosGeneradosBack=0;
+		estadosGeneradosGreedy=0;
 	}
 
 	//-------------------------------Servicio 1:-------------------------------------------------
@@ -92,7 +91,11 @@ public class Servicios {
 	/*La complejidad temporal de este método es O(n^m), donde n es la cantidad de tareas y m es la cantidad de procesadores.
 	Esto se debe a que el algoritmo de backtracking puede generar un número exponencial de posibles asignaciones.*/
 
-
+	/*Este metodo aplica el algoritmo Backtracking de búsqueda exhaustiva que explora recursivamente todas las posibles
+	asignaciones de tareas a procesadores, manteniendo un registro del tiempo total de ejecución actual y
+	la mejor solución encontrada hasta el momento. Si una asignación no cumple con las restricciones o no mejora la mejor
+	 solución,se descarta y se exploran otras alternativas. El proceso continúa hasta encontrar la asignación óptima o hasta
+	 que se agotan todas las posibilidades.*/
 	public HashMap<Procesador, List<Tarea>> asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
 		//Le asigno el valor a los procesadores np refirgerados
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
@@ -106,7 +109,7 @@ public class Servicios {
 
 	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion, int tiempoParcial) {
 		//LLevo la cuenta de los estados generados
-		this.estadosGenerados++;
+		this.estadosGeneradosBack++;
 		// Si el indice actual es igual a la cant de tareas es porque se asignaron todas
 		if (tareaIndex == tareas.size()) {
 			if (tiempoParcial < tiempoMejor) {
@@ -166,7 +169,7 @@ public class Servicios {
 		tareasAsignadas.putIfAbsent(procesador, new ArrayList<>());
 		tareasAsignadas.get(procesador).add(tarea);
 		procesador.addTareaAsignada(tarea);
-		//System.out.println(tareasAsignadas+"\n");
+		this.estadosGeneradosBack++; //Por cada estado que genero voy sumando
 	}
 
 	private void desasignar(Procesador procesador, Tarea tarea) {
@@ -186,8 +189,8 @@ public class Servicios {
 	}
 
 	//Metodo que devuelve la cantidad de estados de Backtracking
-	public int getEstadosGenerados() {
-		return estadosGenerados;
+	public int getEstadosGeneradosBack() {
+		return estadosGeneradosBack;
 	}
 
 	//Tiempo de ejecucion (El procesador que más tarda)
@@ -204,39 +207,51 @@ public class Servicios {
 		return maxTiempo;
 	}
 
-	public void imprimirMaxTiempoEjecucion() {
-		int maxTiempo = getMaxTiempoEjecucion();
-		System.out.println("El tiempo máximo de ejecución es: " + maxTiempo);
-	}
 
-
-	//-------------------------------Greedy Algorithm------------------------------------------------------------------------
+	//-------------------------------Greedy------------------------------------------------------------------------
 
     /*La complejidad temporal de este método es O(n log m), donde n es la cantidad de tareas y m es la cantidad de procesadores.
-    Esto se debe a que en cada iteración se selecciona el procesador con el menor tiempo total de ejecución, que puede lograrse utilizando una cola de prioridad.*/
+    Esto se debe a que en cada iteración se selecciona el procesador con el menor tiempo total de ejecución, que puede
+    lograrse utilizando una cola de prioridad.*/
 
+	/*Este étodo aplica el algoritmo Greedy. Es unalgoritmo heurístico que toma decisiones a corto plazo
+	con el objetivo de optimizar la solución global.
+	En este contexto de asignación de tareas a procesadores, el algoritmo Greedy selecciona iterativamente el procesador
+	con el menor tiempo total de ejecución actual para cada tarea, sin considerar el impacto en la carga de trabajo
+	de los demás procesadores. Este enfoque busca una buena solución en un tiempo computacional menor que el Backtracking,
+	 pero no garantiza la optimalidad.*/
 	public HashMap<Procesador, List<Tarea>> asignarTareasGreedy(int tiempoMaxNoRefrigerado) {
+		//Le asigno el tiempo de ejecucion maxima para los procesadores no refirgerados
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
+		//Nuevo Hashmap
 		this.tareasAsignadas = new HashMap<>();
 
+		//Creo una cola de prioridad de procesadores ordenada por su tiempo total de ejecución actual
 		PriorityQueue<Procesador> minHeap = new PriorityQueue<>(Comparator.comparingInt(this::getTiempoEjecucionProcesador));
 
+		//Agrego cada procesador a la cola de prioridad
 		for (Procesador procesador : procesadores) {
 			this.tareasAsignadas.put(procesador, new ArrayList<>());
 			minHeap.offer(procesador);
 		}
 
+		//Recorro las tareas
 		for (Tarea tarea : tareas) {
 			boolean asignada = false;
 
+			//Mientras la tarea no este asignada y la cola de prioridad no este vacía
 			while (!asignada && !minHeap.isEmpty()) {
+				//Obtengo el procesador con menor tiempo total de ejecucion actual
 				Procesador procesador = minHeap.poll();
 
+				//Si la tarea se puede asignar (condiciones de asignacion), la agrego
 				if (puedeAsignar(procesador, tarea)) {
 					asignar(procesador, tarea);
 					asignada = true;
+					this.estadosGeneradosGreedy++; //Llevo el conteo de estados
 				}
 
+				//Actualizo la cola
 				minHeap.offer(procesador);
 			}
 
@@ -245,6 +260,7 @@ public class Servicios {
 			}
 		}
 
+		//Recupero las tareas asignadas
 		getTareasAsignadas();
 		return tareasAsignadas;
 	}
@@ -253,5 +269,7 @@ public class Servicios {
 		return tareasAsignadas.get(procesador).stream().mapToInt(Tarea::getTiempoEjecucion).sum();
 	}
 
-
+	public int getEstadosGeneradosGreedy(){
+		return estadosGeneradosGreedy;
+	}
 }

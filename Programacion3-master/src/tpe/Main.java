@@ -1,9 +1,7 @@
 package tpe;
-import tpe.utils.CSVReader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class Main {
 
@@ -41,12 +39,16 @@ public class Main {
 		else{
 			System.out.println("No es posible realizar la asignación");
 		}
-		System.out.println("\n-----------Métrica (cantidad de datos considerados): -------------------");
-		System.out.println("\nLos estados generados fueron: "+servicios.getEstadosGenerados());
-		System.out.println("\nEl tiempo máximo de ejecución (dado por el procesador que más tarda), es:\n");
+		System.out.println(
+				"\n-----------Tiempo máximo de ejecución: (cantidad de datos considerados): -------------------" +
+				"\nEl tiempo máximo es: "+
+						servicios.getMaxTiempoEjecucion()+"\n"+
+				"\n-----------Métrica (cantidad de datos considerados): -------------------" +
+				"\nLos estados generados fueron: "+servicios.getEstadosGeneradosBack()
 
+		);
 
-		/*System.out.println("-----------------Greedy------------------------");
+		System.out.println("-----------------Asignación Greedy:------------------------");
 		// Asignar tareas usando el algoritmo greedy
 		HashMap<Procesador, List<Tarea>> asignacion = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
 
@@ -62,7 +64,17 @@ public class Main {
 			}
 		} else {
 			System.out.println("No es posible realizar la asignación");
-		}*/
+		}
+
+		System.out.println(
+				"\n-----------Tiempo máximo de ejecución: (cantidad de datos considerados): -------------------" +
+						"\nEl tiempo máximo es: "+
+						servicios.getMaxTiempoEjecucion()+"\n"+
+						"\n-----------Métrica (cantidad de datos considerados): -------------------" +
+						"\nLos estados generados fueron: "+servicios.getEstadosGeneradosGreedy()
+
+		);
 	}
+
 }
 

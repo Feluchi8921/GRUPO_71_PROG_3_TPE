@@ -5,7 +5,7 @@ import java.util.Random;
 public class TaskGenerator {
 
     public static void main(String[] args) {
-        int numTasks = 5000; // Number of tasks to generate
+        int numTasks = 30; // Number of tasks to generate
 
         List<String> tasks = new ArrayList<>(); // List to store generated tasks
 

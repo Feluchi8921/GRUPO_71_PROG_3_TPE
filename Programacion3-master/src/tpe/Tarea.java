@@ -19,7 +19,7 @@ public class Tarea {
         this.nivelPrioridad = nivelPrioridad;
     }
 
-    //Se construyen solo los getters porque no se modifican las tareas entrantes
+    //Agrego solo los getters porque no se modifican las tareas entrantes
     public String getIdTarea() {
         return idTarea;
     }
@@ -41,7 +41,6 @@ public class Tarea {
     }
 
 
-    //toString
     public String toString() {
         return "Tarea{" +
                 "id='" + idTarea + '\'' +
