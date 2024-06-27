@@ -102,9 +102,11 @@ public class Servicios {
 		List<Tarea> asignacion = new ArrayList<>();
 		if (asignarTareasBacktracking(0, asignacion, 0)) {
 			// Devuelvo una copia de las tareas Asignadas
-			return getTareasAsignadas();
+			System.out.println("Asignación exitosa: ");
+			return copiaTareasAsignadas();
 		}
-			return new HashMap<>();
+			System.out.println("No fue posible asignar las tareas");
+		return new HashMap<>();
 	}
 
 	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion, int tiempoParcial) {
@@ -272,4 +274,24 @@ public class Servicios {
 	public int getEstadosGeneradosGreedy(){
 		return estadosGeneradosGreedy;
 	}
+
+	//Agrego un metodo que devuelva una copia o que imprima si no hay solucion
+public HashMap<Procesador, List<Tarea>> copiaTareasAsignadas() {
+
+	HashMap<Procesador, List<Tarea>> copiaTareasAsignadas = new HashMap<>();
+	for (Map.Entry<Procesador, List<Tarea>> entry : this.tareasAsignadas.entrySet()) {
+		Procesador procesador = entry.getKey();
+		List<Tarea> tareasAsignadas = entry.getValue();
+
+		List<Tarea> copiaTareas = new ArrayList<>();
+		for (Tarea tarea : tareasAsignadas) {
+			copiaTareas.add(tarea);
+		}
+
+		copiaTareasAsignadas.put(procesador, copiaTareas);
+	}
+
+	return copiaTareasAsignadas;
+
+}
 }

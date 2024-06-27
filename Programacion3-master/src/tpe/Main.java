@@ -23,8 +23,6 @@ public class Main {
 
 		System.out.println("\n-----------Asignación Backtracking:-------------------\n");
 		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
-		if (tareasAsignadas != null && !tareasAsignadas.isEmpty()) {
-			System.out.println("Asignación Backtracking exitosa:");
 			for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
 				Procesador procesador = entry.getKey();
 				List<Tarea> tareas = entry.getValue();
@@ -35,10 +33,7 @@ public class Main {
 					System.out.println("	- " + tarea);
 				}
 			}
-		}
-		else{
-			System.out.println("No es posible realizar la asignación");
-		}
+
 		System.out.println(
 				"\n-----------Tiempo máximo de ejecución: (cantidad de datos considerados): -------------------" +
 				"\nEl tiempo máximo es: "+
