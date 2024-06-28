@@ -42,7 +42,7 @@ public class Main {
 				"\nLos estados generados fueron: "+servicios.getEstadosGeneradosBack()
 
 		);
-
+/*
 		System.out.println("-----------------Asignación Greedy:------------------------");
 		// Asignar tareas usando el algoritmo greedy
 		HashMap<Procesador, List<Tarea>> asignacion = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
@@ -69,6 +69,8 @@ public class Main {
 						"\nLos estados generados fueron: "+servicios.getEstadosGeneradosGreedy()
 
 		);
+
+ */
 	}
 
 }

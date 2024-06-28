@@ -17,6 +17,7 @@ public class Servicios {
 	private final int maxTareasCritPorProc = 2;
 	private int maxTiempoEjecucion;
 	private HashMap<Procesador, List<Tarea>> tareasAsignadas;
+	private int tiempoMaxNoRefrigerado;
 	private int tiempoMejor;
 	private int estadosGeneradosBack;
 	private int estadosGeneradosGreedy;
@@ -31,6 +32,7 @@ public class Servicios {
 		this.tareasPrioridad = new ArrayList<>();
 		this.addTareas(this.tareas); //Se cargan las tareas en cada estructura
 		this.procesadores = reader.readProcessors(pathProcesadores);
+		this.tiempoMaxNoRefrigerado = 0;
 		this.tareasAsignadas = new HashMap<>();
 		this.tiempoMejor =  Integer.MAX_VALUE; // Inicializar a un valor grande
 		this.estadosGeneradosBack=0;
@@ -117,83 +119,85 @@ public class Servicios {
 	 que se agotan todas las posibilidades.*/
 	public HashMap<Procesador, List<Tarea>> asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
 		//Le asigno el valor a los procesadores np refirgerados
-		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
-		HashMap<Procesador, List<Tarea>> estado = new HashMap<>();
-		if (asignarTareasBacktracking(0, 0, estado)) {
-			// Devuelvo una copia de las tareas Asignadas
-			System.out.println("Asignación exitosa: ");
-			return copiaTareasAsignadas();
-		}
-			System.out.println("No fue posible asignar las tareas");
-		return new HashMap<>();
+		this.tiempoMaxNoRefrigerado = tiempoMaxNoRefrigerado;
+		HashMap<Procesador, List<Tarea>> estado = new HashMap<>(); // PENSAR
+		this.asignarTareasBacktracking(0, 0, estado);
+		return this.copiarHashMap(this.tareasAsignadas);
 	}
 
-	private boolean asignarTareasBacktracking(int tareaIndex, int tiempoParcial, HashMap<Procesador, List<Tarea>> estado) {
-
-		// Si el indice actual es igual a la cant de tareas es porque se asignaron todas
-		if (tareaIndex == tareas.size()) {
-			if (tiempoParcial <= tiempoMejor) {
-				tiempoMejor = tiempoParcial;
-				return true;
+	private void asignarTareasBacktracking(int tareaIndex, int tiempoParcial, HashMap<Procesador, List<Tarea>> estado) {
+		// Si el índice de la tarea es igual al tamaño, ya se asignaron todas y se interrumpe la recursión
+		if (tareaIndex == this.tareasPrioridad.size()) { //condición de corte
+			int tiempoMaximo = calcularTiempoMaximoProcesadores();
+			if (tiempoMaximo <= this.tiempoMejor) {
+				this.tiempoMejor = tiempoMaximo; // Se actualiza el tiempo máximo
+				this.tareasAsignadas = this.copiarHashMap(estado);
 			}
-			return false;
+			return;
 		}
 
-		// Obtengo la tarea del indice actual
-		Tarea tarea = tareas.get(tareaIndex);
+		// Se obtiene la tarea con el índice dado
+		Tarea t = this.tareasPrioridad.get(tareaIndex);
 
-		// Recorro los procesadores
-		for (Procesador procesador : procesadores) {
-			// Verifico si es asignable
-			if (puedeAsignar(procesador, tarea)) {
-				// Calculo el nuevo tiempo parcial
-				int nuevoTiempoParcial = tiempoParcial + tarea.getTiempoEjecucion();
-				//System.out.println(nuevoTiempoParcial);
-				// La agrego
-				asignar(procesador, tarea);
-				// Llamo a la recursion con el siguiente índice de tarea y la asignacion actual
-				if (asignarTareasBacktracking(tareaIndex + 1, nuevoTiempoParcial, estado)) {
-					return true;
-				}
-				// Elimino el agregar
-				desasignar(procesador, tarea);
+		for (Procesador p : procesadores) {
+			if (this.puedeAsignar(t, p, estado)) { // Poda
+				// Se asigna la tarea y se calcula el nuevo tiempo parcial
+				this.asignar(t, p, estado);
+				int nuevoTiempoParcial = tiempoParcial + t.getTiempoEjecucion();
+				this.estadosGeneradosBack++;
+
+				this.asignarTareasBacktracking(tareaIndex + 1, nuevoTiempoParcial, estado); // Llamado recursivo
+
+				this.desasignar(t, p, estado); // Se libera la tarea asignada (deshacer cambios)
 			}
 		}
-
-		return false;
 	}
 
-	//Metodo que se encarga de establecer las condiciones de asignacion de tareas
-	private boolean puedeAsignar(Procesador procesador, Tarea tarea) {
-		List<Tarea> tareasProcesador = tareasAsignadas.getOrDefault(procesador, new ArrayList<>());
+	// Método que verifica si puede asignarse una determinada tarea a un procesador dado
+	private boolean puedeAsignar(Tarea tarea, Procesador procesador, HashMap<Procesador, List<Tarea>> estado) {
+		// Verificar límite de tareas críticas
+		int criticasAsignadas = 0;
+		List<Tarea> tareasAsignadas = estado.get(procesador);
 
-		if (tarea.isCritica()) {
-			long countCriticas = tareasProcesador.stream().filter(Tarea::isCritica).count();
-			if (countCriticas >= maxTareasCritPorProc) {
-				return false;
-			}
+		if (tareasAsignadas == null)
+			tareasAsignadas = new ArrayList<>();
+
+		for (Tarea t : tareasAsignadas) {
+			if (t.isCritica())
+				criticasAsignadas++;
 		}
 
+		if (tarea.isCritica() && criticasAsignadas >= maxTareasCritPorProc)
+			return false; // No se pueden asignar más de 2 tareas críticas en total
+
+		// Verificar tiempo límite en procesadores no refrigerados
 		if (!procesador.isRefrigerado()) {
-			int tiempoTotal = tareasProcesador.stream().mapToInt(Tarea::getTiempoEjecucion).sum();
-			if (tiempoTotal + tarea.getTiempoEjecucion() > maxTiempoEjecucion) {
-				return false;
+			int tiempoTotal = 0;
+			for (Tarea t : tareasAsignadas) {
+				tiempoTotal += t.getTiempoEjecucion();
 			}
+
+			if (tiempoTotal + tarea.getTiempoEjecucion() > this.tiempoMaxNoRefrigerado)
+				return false; // Se excede el tiempo límite
 		}
 
-		return true;
+		return true; // La asignación cumple con todas las restricciones
 	}
 
-	//Este metodo asigna las tareas al procesador
-	private void asignar(Procesador procesador, Tarea tarea) {
-		tareasAsignadas.putIfAbsent(procesador, new ArrayList<>());
-		tareasAsignadas.get(procesador).add(tarea);
-		procesador.addTareaAsignada(tarea);
-		this.estadosGeneradosBack++; //Por cada estado que genero voy sumando
+	// Método que asigna una tarea a un procesador
+	private void asignar(Tarea tarea, Procesador procesador, HashMap<Procesador, List<Tarea>> estado) {
+		// Si no existe el procesador en el HashMap lo agrega
+		if (!estado.containsKey(procesador)) {
+			estado.put(procesador, new ArrayList<>());
+		}
+		estado.get(procesador).add(tarea);
+		procesador.addTareaAsignada(tarea); // Se actualiza la lista de tareas en el objeto Procesador
 	}
 
-	private void desasignar(Procesador procesador, Tarea tarea) {
-		tareasAsignadas.get(procesador).remove(tarea);
+	// Método que remueve una tarea asignada de procesador
+	private void desasignar(Tarea tarea, Procesador procesador, HashMap<Procesador, List<Tarea>> estado) {
+		estado.get(procesador).remove(tarea);
+		procesador.removeTarea(tarea);
 	}
 
 	public HashMap<Procesador, List<Tarea>> getTareasAsignadas() {
@@ -227,7 +231,14 @@ public class Servicios {
 		return maxTiempo;
 	}
 
-
+	public int calcularTiempoMaximoProcesadores() {
+		int tiempoMaximo = 0;
+		for (Procesador p : this.procesadores) {
+			if (p.getTiempoTotal() > tiempoMaximo)
+				tiempoMaximo = p.getTiempoTotal();
+		}
+		return tiempoMaximo;
+	}
 	//-------------------------------Greedy------------------------------------------------------------------------
 
     /*La complejidad temporal de este método es O(n log m), donde n es la cantidad de tareas y m es la cantidad de procesadores.
@@ -239,7 +250,7 @@ public class Servicios {
 	En este contexto de asignación de tareas a procesadores, el algoritmo Greedy selecciona iterativamente el procesador
 	con el menor tiempo total de ejecución actual para cada tarea, sin considerar el impacto en la carga de trabajo
 	de los demás procesadores. Este enfoque busca una buena solución en un tiempo computacional menor que el Backtracking,
-	 pero no garantiza la optimalidad.*/
+	 pero no garantiza la optimalidad.
 	public HashMap<Procesador, List<Tarea>> asignarTareasGreedy(int tiempoMaxNoRefrigerado) {
 		//Le asigno el tiempo de ejecucion maxima para los procesadores no refirgerados
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
@@ -292,24 +303,26 @@ public class Servicios {
 	public int getEstadosGeneradosGreedy(){
 		return estadosGeneradosGreedy;
 	}
-
+*/
 	//Agrego un metodo que devuelva una copia o que imprima si no hay solucion
-public HashMap<Procesador, List<Tarea>> copiaTareasAsignadas() {
+// Devuelve una copia del HashMap de asignación de tareas
+	private HashMap<Procesador, List<Tarea>> copiarHashMap(HashMap<Procesador, List<Tarea>> original) {
+		HashMap<Procesador, List<Tarea>> copia = new HashMap<>();
 
-	HashMap<Procesador, List<Tarea>> copiaTareasAsignadas = new HashMap<>();
-	for (Map.Entry<Procesador, List<Tarea>> entry : this.tareasAsignadas.entrySet()) {
-		Procesador procesador = entry.getKey();
-		List<Tarea> tareasAsignadas = entry.getValue();
+		// Itera sobre las entradas del HashMap original
+		for (Map.Entry<Procesador, List<Tarea>> entrada : original.entrySet()) {
+			Procesador procesador = entrada.getKey();
+			List<Tarea> tareasAsignadas = entrada.getValue();
 
-		List<Tarea> copiaTareas = new ArrayList<>();
-		for (Tarea tarea : tareasAsignadas) {
-			copiaTareas.add(tarea);
+			// Crea una nueva lista para almacenar las tareas asignadas al procesador
+			List<Tarea> nuevasTareas = new ArrayList<>(tareasAsignadas);
+
+			// Agrega la entrada al HashMap copia
+			copia.put(procesador, nuevasTareas);
 		}
 
-		copiaTareasAsignadas.put(procesador, copiaTareas);
+		return copia;
 	}
 
-	return copiaTareasAsignadas;
 
-}
 }

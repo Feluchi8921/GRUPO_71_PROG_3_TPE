@@ -9,7 +9,7 @@ public class Procesador {
     private String idProcesador;
     private String codigoProcesador;
     private boolean refrigerado;
-    private int anioFuncionamiento;
+    private Integer anioFuncionamiento;
     private List<Tarea> tareas;
 
     //Constructor
@@ -34,12 +34,14 @@ public class Procesador {
         return refrigerado;
     }
 
-    public int getAnioFuncionamiento() {
+    public Integer getAnioFuncionamiento() {
         return anioFuncionamiento;
     }
 
+    //Chequeo que la tarea que se agrega no esté en la lista y no agrego valores null.
     public void addTareaAsignada(Tarea t){
-        this.tareas.add(t);
+        if (!this.tareas.contains(t) && t != null)
+            this.tareas.add(t);
     }
     public void removeTarea(Tarea tarea) {
         this.tareas.remove(tarea);
