@@ -19,7 +19,7 @@ public class Main {
 		System.out.println(servicios.servicio2(false));
 
 
-		int tiempoMaxNoRefrigerado = 100;
+		int tiempoMaxNoRefrigerado = 200;
 
 		System.out.println("\n-----------Asignación Backtracking:-------------------\n");
 		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);

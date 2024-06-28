@@ -40,7 +40,6 @@ public class Tarea {
         return nivelPrioridad;
     }
 
-
     public String toString() {
         return "Tarea{" +
                 "id='" + idTarea + '\'' +

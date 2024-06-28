@@ -5,6 +5,8 @@ import java.util.*;
 public class Servicios {
 
 	//Atributos primera parte
+	private static final int PRIORIDAD_MINIMA = 1;
+	private static final int PRIORIDAD_MAXIMA = 100;
 	private ArrayList<Tarea> tareas;
 	private HashMap<String, Tarea> tareasId;
 	private HashMap<Boolean, List<Tarea>> tareasCriticidad;
@@ -55,14 +57,22 @@ public class Servicios {
 	para utilizar nuestra clase Arbol realizada en la cursada deberíamos utilizar técnicas de balanceo.*/
 
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
-		List<Tarea> tareasFiltradas = new ArrayList<>();
-		for (Tarea tarea : tareas) {
-			int prioridadTarea = tarea.getNivelPrioridad();
-			if (prioridadTarea >= prioridadInferior && prioridadTarea <= prioridadSuperior) {
-				tareasFiltradas.add(tarea);
+		List<Tarea> resultado = new ArrayList<>();
+
+		if (prioridadInferior < PRIORIDAD_MINIMA || prioridadSuperior > PRIORIDAD_MAXIMA) {
+			return resultado;
+		}
+
+		for (Tarea tarea : this.tareas) {
+			int prioridad = tarea.getNivelPrioridad();
+
+			if (prioridad >= prioridadInferior && prioridad <= prioridadSuperior) {
+				resultado.add(tarea);
+			} else if (prioridad > prioridadSuperior) { // Si la prioridad excede el límite superior, termina
+				break;
 			}
 		}
-		return tareasFiltradas;
+		return resultado;
 	}
 
 	//Este metodo se encarga de la carga de las estructuras a utilizar.
@@ -99,8 +109,8 @@ public class Servicios {
 	public HashMap<Procesador, List<Tarea>> asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
 		//Le asigno el valor a los procesadores np refirgerados
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
-		List<Tarea> asignacion = new ArrayList<>();
-		if (asignarTareasBacktracking(0, asignacion, 0)) {
+		HashMap<Procesador, List<Tarea>> estado = new HashMap<>();
+		if (asignarTareasBacktracking(0, 0, estado)) {
 			// Devuelvo una copia de las tareas Asignadas
 			System.out.println("Asignación exitosa: ");
 			return copiaTareasAsignadas();
@@ -109,12 +119,11 @@ public class Servicios {
 		return new HashMap<>();
 	}
 
-	private boolean asignarTareasBacktracking(int tareaIndex, List<Tarea> asignacion, int tiempoParcial) {
-		//LLevo la cuenta de los estados generados
-		this.estadosGeneradosBack++;
+	private boolean asignarTareasBacktracking(int tareaIndex, int tiempoParcial, HashMap<Procesador, List<Tarea>> estado) {
+
 		// Si el indice actual es igual a la cant de tareas es porque se asignaron todas
 		if (tareaIndex == tareas.size()) {
-			if (tiempoParcial < tiempoMejor) {
+			if (tiempoParcial <= tiempoMejor) {
 				tiempoMejor = tiempoParcial;
 				return true;
 			}
@@ -134,7 +143,7 @@ public class Servicios {
 				// La agrego
 				asignar(procesador, tarea);
 				// Llamo a la recursion con el siguiente índice de tarea y la asignacion actual
-				if (asignarTareasBacktracking(tareaIndex + 1, asignacion, nuevoTiempoParcial)) {
+				if (asignarTareasBacktracking(tareaIndex + 1, nuevoTiempoParcial, estado)) {
 					return true;
 				}
 				// Elimino el agregar
