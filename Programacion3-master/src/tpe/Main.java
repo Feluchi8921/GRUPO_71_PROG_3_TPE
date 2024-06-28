@@ -19,10 +19,13 @@ public class Main {
 		System.out.println(servicios.servicio2(false));
 
 
-		int tiempoMaxNoRefrigerado = 200;
+		int tiempoMaxNoRefrigerado = 80;
 
 		System.out.println("\n-----------Asignación Backtracking:-------------------\n");
 		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
+		if (tareasAsignadas == null || tareasAsignadas.isEmpty()) {
+			System.out.println("No hay solucion");
+		} else {
 			for (Map.Entry<Procesador, List<Tarea>> entry : tareasAsignadas.entrySet()) {
 				Procesador procesador = entry.getKey();
 				List<Tarea> tareas = entry.getValue();
@@ -34,14 +37,15 @@ public class Main {
 				}
 			}
 
-		System.out.println(
-				"\n-----------Tiempo máximo de ejecución: (cantidad de datos considerados): -------------------" +
-				"\nEl tiempo máximo es: "+
-						servicios.getMaxTiempoEjecucion()+"\n"+
-				"\n-----------Métrica (cantidad de datos considerados): -------------------" +
-				"\nLos estados generados fueron: "+servicios.getEstadosGeneradosBack()
+			System.out.println(
+					"\n-----------Tiempo máximo de ejecución: (cantidad de datos considerados): -------------------" +
+							"\nEl tiempo máximo es: " +
+							servicios.getMaxTiempoEjecucion() + "\n" +
+							"\n-----------Métrica (cantidad de datos considerados): -------------------" +
+							"\nLos estados generados fueron: " + servicios.getEstadosGeneradosBack()
 
-		);
+			);
+		}
 /*
 		System.out.println("-----------------Asignación Greedy:------------------------");
 		// Asignar tareas usando el algoritmo greedy
