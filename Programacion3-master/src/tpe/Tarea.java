@@ -1,13 +1,13 @@
 package tpe;
 
-public class Tarea {
+public class Tarea implements Comparable<Tarea>{
 
     //Atributos
     private String idTarea;
     private String nombreTarea;
-    private int tiempoEjecucion;
+    private Integer tiempoEjecucion;
     private boolean critica;
-    private int nivelPrioridad;
+    private Integer nivelPrioridad;
 
 
     //Constructor
@@ -28,7 +28,7 @@ public class Tarea {
         return nombreTarea;
     }
 
-    public int getTiempoEjecucion() {
+    public Integer getTiempoEjecucion() {
         return tiempoEjecucion;
     }
 
@@ -36,7 +36,7 @@ public class Tarea {
         return critica;
     }
 
-    public int getNivelPrioridad() {
+    public Integer getNivelPrioridad() {
         return nivelPrioridad;
     }
 
@@ -48,5 +48,10 @@ public class Tarea {
                 ", critica=" + critica +
                 ", prioridad=" + nivelPrioridad +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Tarea otraTarea) {
+        return this.nivelPrioridad.compareTo(otraTarea.getNivelPrioridad());
     }
 }

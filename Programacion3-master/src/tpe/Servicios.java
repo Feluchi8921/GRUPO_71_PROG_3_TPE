@@ -10,6 +10,7 @@ public class Servicios {
 	private ArrayList<Tarea> tareas;
 	private HashMap<String, Tarea> tareasId;
 	private HashMap<Boolean, List<Tarea>> tareasCriticidad;
+	private ArrayList<Tarea> tareasPrioridad;
 
 	//Atributos segunda parte
 	private ArrayList<Procesador> procesadores;
@@ -27,6 +28,7 @@ public class Servicios {
 		this.tareas = reader.readTasks(pathTareas);
 		this.tareasId = new HashMap<>();
 		this.tareasCriticidad = new HashMap<>();
+		this.tareasPrioridad = new ArrayList<>();
 		this.addTareas(this.tareas); //Se cargan las tareas en cada estructura
 		this.procesadores = reader.readProcessors(pathProcesadores);
 		this.tareasAsignadas = new HashMap<>();
@@ -63,12 +65,14 @@ public class Servicios {
 			return resultado;
 		}
 
-		for (Tarea tarea : this.tareas) {
+		for (Tarea tarea : this.tareasPrioridad) {
 			int prioridad = tarea.getNivelPrioridad();
 
 			if (prioridad >= prioridadInferior && prioridad <= prioridadSuperior) {
 				resultado.add(tarea);
-			} else if (prioridad > prioridadSuperior) { // Si la prioridad excede el límite superior, termina
+			}
+
+			else if (prioridad > prioridadSuperior) {
 				break;
 			}
 		}
@@ -93,7 +97,12 @@ public class Servicios {
 
 			//Se actualiza el mapa con la lista actualizada
 			this.tareasCriticidad.put(t.isCritica(), tareasCriticidad);
+
+			//Tareas por prioridad
+			this.tareasPrioridad.add(t);
 		}
+		//Ordeno las tareas por prioridad
+		Collections.sort(this.tareasPrioridad);
 	}
 
 	//-------------------------------Backtracking------------------------------------------------------------------------
