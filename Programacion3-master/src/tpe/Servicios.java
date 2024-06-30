@@ -58,8 +58,9 @@ public class Servicios {
 	/*	Complejidad temporal: O(n) donde n es la cantidad de tareas.
 	Se podría mejorar la complejidad utilizando un arbol binario de busqueda balanceado.
 	Se decidió no utilizarlo porque no sabemos utilizar las librerías de arboles provistas por Java y
-	para utilizar nuestra clase Arbol realizada en la cursada deberíamos utilizar técnicas de balanceo.*/
-
+	para utilizar nuestra clase Arbol realizada en la cursada deberíamos utilizar técnicas de balanceo.
+	Modificación: Se utiliza la lista de tareas ordenadas por prioridad
+	 */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		List<Tarea> resultado = new ArrayList<>();
 
