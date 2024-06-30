@@ -11,15 +11,22 @@ public class Main {
 		Servicios servicios = new Servicios("Programacion3-master/src/tpe/datasets/Procesadores.csv", "Programacion3-master/src/tpe/datasets/Tareas.csv");
 
 		//----------------------------------Servicios 1, 2 y 3-------------------------------------
+		// Servicio 1
 		System.out.println("--------------La tarea con ID T1 es:-------------");
 		System.out.println(servicios.servicio1("T1"));
+		// Servicio 2
 		System.out.println("\n--------------Las tareas criticas son:------------------- ");
 		System.out.println(servicios.servicio2(true));
 		System.out.println("\n--------------Las tareas no criticas son:------------------- ");
 		System.out.println(servicios.servicio2(false));
+		// Servicio 3
+		int prioridadInferior = 10;
+		int prioridadSuperior = 50;
+		System.out.println("\n--------------Las tareas dentro del rango de prioridad especificado son:-------------------");
+		System.out.println(servicios.servicio3(prioridadInferior, prioridadSuperior));
 
 
-		int tiempoMaxNoRefrigerado = 80;
+		int tiempoMaxNoRefrigerado = 200;
 
 		System.out.println("\n-----------Asignación Backtracking:-------------------\n");
 		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
@@ -46,7 +53,9 @@ public class Main {
 
 			);
 		}
-/*
+
+
+
 		System.out.println("-----------------Asignación Greedy:------------------------");
 		// Asignar tareas usando el algoritmo greedy
 		HashMap<Procesador, List<Tarea>> asignacion = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
@@ -74,7 +83,7 @@ public class Main {
 
 		);
 
- */
+
 	}
 
 }

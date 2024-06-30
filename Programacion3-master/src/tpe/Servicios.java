@@ -243,14 +243,16 @@ public class Servicios {
 
     /*La complejidad temporal de este método es O(n log m), donde n es la cantidad de tareas y m es la cantidad de procesadores.
     Esto se debe a que en cada iteración se selecciona el procesador con el menor tiempo total de ejecución, que puede
-    lograrse utilizando una cola de prioridad.*/
+    lograrse utilizando una cola de prioridad.
 
-	/*Este étodo aplica el algoritmo Greedy. Es unalgoritmo heurístico que toma decisiones a corto plazo
+	/*Este étodo aplica el algoritmo Greedy. Es un algoritmo heurístico que toma decisiones a corto plazo
 	con el objetivo de optimizar la solución global.
 	En este contexto de asignación de tareas a procesadores, el algoritmo Greedy selecciona iterativamente el procesador
 	con el menor tiempo total de ejecución actual para cada tarea, sin considerar el impacto en la carga de trabajo
 	de los demás procesadores. Este enfoque busca una buena solución en un tiempo computacional menor que el Backtracking,
 	 pero no garantiza la optimalidad.
+
+     */
 	public HashMap<Procesador, List<Tarea>> asignarTareasGreedy(int tiempoMaxNoRefrigerado) {
 		//Le asigno el tiempo de ejecucion maxima para los procesadores no refirgerados
 		this.maxTiempoEjecucion = tiempoMaxNoRefrigerado;
@@ -276,10 +278,17 @@ public class Servicios {
 				Procesador procesador = minHeap.poll();
 
 				//Si la tarea se puede asignar (condiciones de asignacion), la agrego
-				if (puedeAsignar(procesador, tarea)) {
-					asignar(procesador, tarea);
+				if (puedeAsignarGreedy(procesador, tarea)) {
+					asignarGreedy(procesador, tarea);
 					asignada = true;
 					this.estadosGeneradosGreedy++; //Llevo el conteo de estados
+				}
+
+				//Aca estaba el error del bucle infinito!!!!!!!!!!!!!!
+				else{
+					this.tareasAsignadas=new HashMap<>();
+					this.estadosGeneradosGreedy=0;
+					break;
 				}
 
 				//Actualizo la cola
@@ -295,6 +304,30 @@ public class Servicios {
 		getTareasAsignadas();
 		return tareasAsignadas;
 	}
+	//Metodo que se encarga de establecer las condiciones de asignacion de tareas
+	private boolean puedeAsignarGreedy(Procesador procesador, Tarea tarea) {
+		List<Tarea> tareasProcesador = tareasAsignadas.getOrDefault(procesador, new ArrayList<>());
+		if (tarea.isCritica()) {
+			long countCriticas = tareasProcesador.stream().filter(Tarea::isCritica).count();
+			if (countCriticas >= maxTareasCritPorProc) {
+				return false;
+			}
+		}
+		if (!procesador.isRefrigerado()) {
+			int tiempoTotal = tareasProcesador.stream().mapToInt(Tarea::getTiempoEjecucion).sum();
+			if (tiempoTotal + tarea.getTiempoEjecucion() > maxTiempoEjecucion) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	//Este metodo asigna las tareas al procesador
+	private void asignarGreedy(Procesador procesador, Tarea tarea) {
+		tareasAsignadas.putIfAbsent(procesador, new ArrayList<>());
+		tareasAsignadas.get(procesador).add(tarea);
+		procesador.addTareaAsignada(tarea);
+	}
 
 	private int getTiempoEjecucionProcesador(Procesador procesador) {
 		return tareasAsignadas.get(procesador).stream().mapToInt(Tarea::getTiempoEjecucion).sum();
@@ -303,8 +336,7 @@ public class Servicios {
 	public int getEstadosGeneradosGreedy(){
 		return estadosGeneradosGreedy;
 	}
-*/
-	//Agrego un metodo que devuelva una copia o que imprima si no hay solucion
+
 // Devuelve una copia del HashMap de asignación de tareas
 	private HashMap<Procesador, List<Tarea>> copiarHashMap(HashMap<Procesador, List<Tarea>> original) {
 		HashMap<Procesador, List<Tarea>> copia = new HashMap<>();
