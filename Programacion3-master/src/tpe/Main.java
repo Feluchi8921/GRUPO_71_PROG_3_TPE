@@ -20,15 +20,15 @@ public class Main {
 		System.out.println("\n--------------Las tareas no criticas son:------------------- ");
 		System.out.println(servicios.servicio2(false));
 		// Servicio 3
-		int prioridadInferior = 10;
-		int prioridadSuperior = 50;
+		int prioridadInferior = 1;
+		int prioridadSuperior = 80;
 		System.out.println("\n--------------Las tareas dentro del rango de prioridad especificado son:-------------------");
 		System.out.println(servicios.servicio3(prioridadInferior, prioridadSuperior));
 
 
 		int tiempoMaxNoRefrigerado = 200;
 
-		System.out.println("\n-----------Asignación Backtracking:-------------------\n");
+		System.out.println("\n-----------Asignación Backtracking:-------------------");
 		HashMap<Procesador, List<Tarea>> tareasAsignadas = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
 		if (tareasAsignadas == null || tareasAsignadas.isEmpty()) {
 			System.out.println("No hay solucion");
@@ -56,7 +56,7 @@ public class Main {
 
 
 
-		System.out.println("-----------------Asignación Greedy:------------------------");
+		System.out.println("\n-----------------Asignación Greedy:------------------------");
 		// Asignar tareas usando el algoritmo greedy
 		HashMap<Procesador, List<Tarea>> asignacion = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
 

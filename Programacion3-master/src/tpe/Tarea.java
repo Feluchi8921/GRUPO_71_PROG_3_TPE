@@ -50,8 +50,10 @@ public class Tarea implements Comparable<Tarea>{
                 '}';
     }
 
+
     @Override
     public int compareTo(Tarea otraTarea) {
         return this.nivelPrioridad.compareTo(otraTarea.getNivelPrioridad());
     }
+
 }

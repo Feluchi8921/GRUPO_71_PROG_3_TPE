@@ -14,7 +14,7 @@ public class Servicios {
 
 	//Atributos segunda parte
 	private ArrayList<Procesador> procesadores;
-	private final int maxTareasCritPorProc = 2;
+	private static final int MAX_TAREAS_CRITICAS = 2;
 	private int maxTiempoEjecucion;
 	private HashMap<Procesador, List<Tarea>> tareasAsignadas;
 	private int tiempoMaxNoRefrigerado;
@@ -116,7 +116,9 @@ public class Servicios {
 	asignaciones de tareas a procesadores, manteniendo un registro del tiempo total de ejecución actual y
 	la mejor solución encontrada hasta el momento. Si una asignación no cumple con las restricciones o no mejora la mejor
 	 solución,se descarta y se exploran otras alternativas. El proceso continúa hasta encontrar la asignación óptima o hasta
-	 que se agotan todas las posibilidades.*/
+	 que se agotan todas las posibilidades.
+	 Modificación: Mejoré el manejo de los estados
+	 */
 	public HashMap<Procesador, List<Tarea>> asignarTareasBacktracking(int tiempoMaxNoRefrigerado) {
 		//Le asigno el valor a los procesadores np refirgerados
 		this.tiempoMaxNoRefrigerado = tiempoMaxNoRefrigerado;
@@ -167,7 +169,7 @@ public class Servicios {
 				criticasAsignadas++;
 		}
 
-		if (tarea.isCritica() && criticasAsignadas >= maxTareasCritPorProc)
+		if (tarea.isCritica() && criticasAsignadas >= MAX_TAREAS_CRITICAS)
 			return false; // No se pueden asignar más de 2 tareas críticas en total
 
 		// Verificar tiempo límite en procesadores no refrigerados
@@ -251,7 +253,7 @@ public class Servicios {
 	con el menor tiempo total de ejecución actual para cada tarea, sin considerar el impacto en la carga de trabajo
 	de los demás procesadores. Este enfoque busca una buena solución en un tiempo computacional menor que el Backtracking,
 	 pero no garantiza la optimalidad.
-
+	Modificación: Se agregó el corte dentro del while porque cuando no encontraba solución se generaba un bucle infinito
      */
 	public HashMap<Procesador, List<Tarea>> asignarTareasGreedy(int tiempoMaxNoRefrigerado) {
 		//Le asigno el tiempo de ejecucion maxima para los procesadores no refirgerados
@@ -309,7 +311,7 @@ public class Servicios {
 		List<Tarea> tareasProcesador = tareasAsignadas.getOrDefault(procesador, new ArrayList<>());
 		if (tarea.isCritica()) {
 			long countCriticas = tareasProcesador.stream().filter(Tarea::isCritica).count();
-			if (countCriticas >= maxTareasCritPorProc) {
+			if (countCriticas >= MAX_TAREAS_CRITICAS) {
 				return false;
 			}
 		}
